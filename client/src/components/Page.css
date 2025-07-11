@@ -1,0 +1,57 @@
+.custom-toast {
+  animation: fadeInOut 2s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+  width: 170px;
+  margin: 0 auto;
+  position: relative;
+  top: 10px;
+  z-index: 1;
+  text-align: center;
+  --bs-bg-opacity: 1;
+  background-color: rgb(28 27 30 / 89%) !important
+  
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.navigate-btn{
+  width: 190px;
+  
+}
+
+.custom-table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  scrollbar-width: thin;
+  scrollbar-color: #aaa transparent;
+}
+
+.custom-table-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #343a40;
+  color: white;
+}
+.bi-list {
+  transition: transform 0.2s ease;
+}
+
+.bi-list:hover {
+  transform: scale(1.2);
+}
