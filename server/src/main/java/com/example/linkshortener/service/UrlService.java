@@ -20,50 +20,51 @@ public class UrlService {
     @Autowired
     private UrlRepository urlRepository;
 
-    public ShortUrl shortenUrl(String originalUrl) {
-    if (!isValidUrl(originalUrl)) {
-        throw new IllegalArgumentException("Invalid URL format.");
-    }
-
-    String normalizedUrl = normalizeUrl(originalUrl);  // ✅ Normalize
-
-    Optional<ShortUrl> existing = urlRepository.findByOriginalUrl(normalizedUrl);
-    LocalDateTime now = LocalDateTime.now();
-
-    if (existing.isPresent()) {
-        ShortUrl existingUrl = existing.get();
-        if (now.isBefore(existingUrl.getCreatedAt().plusMinutes(5))) {
-            //  Still valid
-            return existingUrl;
-        } else {
-            //  Expired — update time
-            existingUrl.setCreatedAt(now);
-            return urlRepository.save(existingUrl);
+    private String normalizeUrl(String url) {
+    	System.out.println("url = " + url);
+        try {
+            URI uri = new URI(url.trim());
+            
+            String scheme = uri.getScheme() != null ? uri.getScheme().toLowerCase() : "https";
+            String host = uri.getHost() != null ? uri.getHost().toLowerCase().replaceFirst("^www\\.", "") : "";
+            String path = uri.getPath() != null ? uri.getPath().replaceAll("/$", "") : "";
+            String query = uri.getQuery() != null ? "?" + uri.getQuery() : "";
+            System.out.println("Normalized URL: " + scheme + "://" + host + path + query);
+            return scheme + "://" + host + path + query;
+        } catch (Exception e) {
+            return url.trim(); // fallback
         }
     }
 
-    //  Create new entry
-    ShortUrl url = new ShortUrl();
-    url.setId(UUID.randomUUID().toString().substring(0, 7));
-    url.setOriginalUrl(normalizedUrl);
-    url.setCreatedAt(now);
-    return urlRepository.save(url);
-}
+    public ShortUrl shortenUrl(String originalUrl) {
+        if (!isValidUrl(originalUrl)) {
+            throw new IllegalArgumentException("Invalid URL format.");
+        }
+        System.out.println("Original URL: " + originalUrl);
+        String normalizedUrl = normalizeUrl(originalUrl); // <-- normalize here
 
-    private String normalizeUrl(String url) {
-    try {
-        URI uri = new URI(url.trim());
+        Optional<ShortUrl> existing = urlRepository.findByOriginalUrl(normalizedUrl);
 
-        String scheme = uri.getScheme() != null ? uri.getScheme().toLowerCase() : "https";
-        String host = uri.getHost() != null ? uri.getHost().toLowerCase().replaceFirst("^www\\.", "") : "";
-        String path = uri.getPath() != null ? uri.getPath().replaceAll("/$", "") : "";
-        String query = uri.getQuery() != null ? "?" + uri.getQuery() : "";
+        LocalDateTime now = LocalDateTime.now();
 
-        return scheme + "://" + host + path + query;
-    } catch (Exception e) {
-        return url.trim(); // fallback
+        if (existing.isPresent()) {
+            ShortUrl existingUrl = existing.get();
+            if (now.isBefore(existingUrl.getCreatedAt().plusMinutes(5))) {
+                return existingUrl;
+            } else {
+                existingUrl.setCreatedAt(now);
+                return urlRepository.save(existingUrl);
+            }
+        }
+
+        // Create new short URL
+        ShortUrl url = new ShortUrl();
+        url.setId(UUID.randomUUID().toString().substring(0, 7));
+        url.setOriginalUrl(normalizedUrl); // <-- store normalized URL
+        url.setCreatedAt(now);
+        return urlRepository.save(url);
     }
-}
+
 
 
     public Optional<ShortUrl> getOriginalUrl(String id) {
