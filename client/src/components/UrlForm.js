@@ -14,22 +14,22 @@ function UrlForm() {
   const [fetchError, setFetchError] = useState('');
  
   const [showModal, setShowModal] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchAllUrls = async () => {
-  setFetchError(''); // clear previous error
+  setFetchError('');
+  setIsFetching(true);     // start loading
+  setShowModal(true);      // open modal immediately
 
   try {
-    // const response = await axios.get("http://localhost:7070/api/urls");
     const response = await axios.get("https://url-shortener-bxjf.onrender.com/api/urls");
-    const urls = response.data;
-
-    setAllUrls(urls);
-    setShowModal(true);  // show modal regardless
+    setAllUrls(response.data);
   } catch (error) {
     console.error("Failed to fetch URLs", error);
-    setAllUrls([]); // clear previous list
+    setAllUrls([]);
     setFetchError('⚠️ Unable to fetch URLs. Please ensure the backend server is running.');
-    setShowModal(true); // still show modal
+  } finally {
+    setIsFetching(false);  // stop loading
   }
 };
 
@@ -129,7 +129,14 @@ function UrlForm() {
         </div>
 
         <div className="modal-body">
-  {fetchError ? (
+  {isFetching ? (
+    <div className="text-center">
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  ) : fetchError ? (
+
     <div className="alert alert-danger text-center">{fetchError}</div>
   ) : allUrls.length === 0 ? (
     <div className="text-center text-muted">No URLs have been generated yet.</div>
