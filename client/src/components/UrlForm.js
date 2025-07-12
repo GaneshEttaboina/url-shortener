@@ -19,7 +19,8 @@ function UrlForm() {
   setFetchError(''); // clear previous error
 
   try {
-    const response = await axios.get("http://localhost:7070/api/urls");
+    // const response = await axios.get("http://localhost:7070/api/urls");
+    const response = await axios.get("https://url-shortener-bxjf.onrender.com/api/urls");
     const urls = response.data;
 
     setAllUrls(urls);
@@ -52,7 +53,8 @@ function UrlForm() {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:7070/api/shorten', { url });
+      // const response = await axios.post('http://localhost:7070/api/shorten', { url });
+      const response = await axios.post('https://url-shortener-bxjf.onrender.com/api/shorten', { url });
       setShortUrl(response.data.shortUrl);
       navigator.clipboard.writeText(response.data.shortUrl);
       setShowToast(true);
