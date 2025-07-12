@@ -1,16 +1,17 @@
 package com.example.linkshortener.service;
 
-import com.example.linkshortener.model.ShortUrl;
-import com.example.linkshortener.repository.UrlRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.linkshortener.model.ShortUrl;
+import com.example.linkshortener.repository.UrlRepository;
 
 @Service
 public class UrlService {
@@ -75,7 +76,7 @@ public class UrlService {
                 boolean isExpired = now.isAfter(url.getCreatedAt().plusMinutes(5));
                 return Map.of(
                     "originalUrl", url.getOriginalUrl(),
-                    "shortUrl", "http://localhost:7070/api/" + url.getId(),
+                    "shortUrl", "https://url-shortener-bxjf.onrender.com/api/" + url.getId(),
                     "status", isExpired ? "expired" : "active"
                 );
             })
