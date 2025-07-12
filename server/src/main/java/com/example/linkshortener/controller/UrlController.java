@@ -43,27 +43,6 @@ public class UrlController {
             return ResponseEntity.status(500).body(Map.of("error", "Internal server error"));
         }
     }
-
-//    @GetMapping("/{id}")
-//    public RedirectView redirectToOriginalUrl(@PathVariable String id) {
-//        Optional<ShortUrl> shortUrlOpt = urlService.getOriginalUrl(id);
-//
-//        if (shortUrlOpt.isPresent()) {
-//            ShortUrl shortUrl = shortUrlOpt.get();
-//            LocalDateTime expiryTime = shortUrl.getCreatedAt().plusMinutes(5);
-//
-//            if (LocalDateTime.now().isAfter(expiryTime)) {
-//                // ✅ Link exists, but expired
-//                return new RedirectView("http://localhost:3000/error?reason=expired");
-//            }
-//
-//            // ✅ Valid and not expired — redirect to original URL
-//            return new RedirectView(shortUrl.getOriginalUrl());
-//        }
-//
-//        // ❌ Link not found
-//        return new RedirectView("http://localhost:3000/error?reason=not_found");
-//    }
     @GetMapping("/{id}")
     public RedirectView redirectToOriginalUrl(@PathVariable String id) {
         Optional<ShortUrl> shortUrlOpt = urlService.findById(id);  // <-- use this

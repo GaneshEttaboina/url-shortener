@@ -41,7 +41,7 @@ public class UrlService {
             throw new IllegalArgumentException("Invalid URL format.");
         }
         System.out.println("Original URL: " + originalUrl);
-        String normalizedUrl = normalizeUrl(originalUrl); // <-- normalize here
+        String normalizedUrl = normalizeUrl(originalUrl); //normalize here
 
         Optional<ShortUrl> existing = urlRepository.findByOriginalUrl(normalizedUrl);
 
@@ -60,7 +60,7 @@ public class UrlService {
         // Create new short URL
         ShortUrl url = new ShortUrl();
         url.setId(UUID.randomUUID().toString().substring(0, 7));
-        url.setOriginalUrl(normalizedUrl); // <-- store normalized URL
+        url.setOriginalUrl(normalizedUrl); // store normalized URL
         url.setCreatedAt(now);
         return urlRepository.save(url);
     }
