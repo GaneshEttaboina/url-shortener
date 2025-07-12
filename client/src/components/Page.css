@@ -55,3 +55,9 @@
 .bi-list:hover {
   transform: scale(1.2);
 }
+.original_url {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
