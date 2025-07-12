@@ -36,7 +36,7 @@ public class UrlController {
         String originalUrl = body.get("url");
         try {
             ShortUrl shortened = urlService.shortenUrl(originalUrl);
-            return ResponseEntity.ok(Map.of("shortUrl", "http://localhost:7070/api/" + shortened.getId()));
+            return ResponseEntity.ok(Map.of("shortUrl", "https://url-shortener-bxjf.onrender.com/" + shortened.getId()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -73,13 +73,16 @@ public class UrlController {
             LocalDateTime expiryTime = shortUrl.getCreatedAt().plusMinutes(5);
 
             if (LocalDateTime.now().isAfter(expiryTime)) {
-                return new RedirectView("http://localhost:3000/error?reason=expired");
+                // return new RedirectView("http://localhost:3000/error?reason=expired");
+                return new RedirectView("https://url-shortner-assessement.netlify.app/error?reason=expired");
+                
             }
 
             return new RedirectView(shortUrl.getOriginalUrl());
         }
 
-        return new RedirectView("http://localhost:3000/error?reason=not_found");
+        // return new RedirectView("http://localhost:3000/error?reason=not_found");
+        return new RedirectView("https://url-shortner-assessement.netlify.app/error?reason=not_found");
     }
     @GetMapping("/urls")
     public ResponseEntity<?> getAllShortenedUrls() {
