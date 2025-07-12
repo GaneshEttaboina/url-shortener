@@ -153,7 +153,7 @@ function UrlForm() {
         <tbody>
           {allUrls.map((item, index) => (
             <tr key={index}>
-              <td>{item.originalUrl}</td>
+              <td className='original_url' title={item.originalUrl}>{item.originalUrl}</td>
               <td>
                 <a href={item.shortUrl} target="_blank" rel="noreferrer">
                   {item.shortUrl}
