@@ -36,7 +36,7 @@ public class UrlController {
         String originalUrl = body.get("url");
         try {
             ShortUrl shortened = urlService.shortenUrl(originalUrl);
-            return ResponseEntity.ok(Map.of("shortUrl", "https://url-shortener-bxjf.onrender.com/" + shortened.getId()));
+            return ResponseEntity.ok(Map.of("shortUrl", "https://url-shortener-bxjf.onrender.com/api/" + shortened.getId()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
