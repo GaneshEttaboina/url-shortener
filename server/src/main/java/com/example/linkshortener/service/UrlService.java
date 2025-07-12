@@ -1,5 +1,6 @@
 package com.example.linkshortener.service;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -20,32 +21,49 @@ public class UrlService {
     private UrlRepository urlRepository;
 
     public ShortUrl shortenUrl(String originalUrl) {
-    	if (!isValidUrl(originalUrl)) {
-            throw new IllegalArgumentException("Invalid URL format.");
-        }
-        Optional<ShortUrl> existing = urlRepository.findByOriginalUrl(originalUrl);
-
-        LocalDateTime now = LocalDateTime.now();
-
-        if (existing.isPresent()) {
-            ShortUrl existingUrl = existing.get();
-            if (now.isBefore(existingUrl.getCreatedAt().plusMinutes(5))) {
-                // Still valid, return it
-                return existingUrl;
-            } else {
-                // Expired — update the time
-                existingUrl.setCreatedAt(now);
-                return urlRepository.save(existingUrl);
-            }
-        }
-
-        // No existing URL, create new one
-        ShortUrl url = new ShortUrl();
-        url.setId(UUID.randomUUID().toString().substring(0, 7));
-        url.setOriginalUrl(originalUrl);
-        url.setCreatedAt(now);
-        return urlRepository.save(url);
+    if (!isValidUrl(originalUrl)) {
+        throw new IllegalArgumentException("Invalid URL format.");
     }
+
+    String normalizedUrl = normalizeUrl(originalUrl);  // ✅ Normalize
+
+    Optional<ShortUrl> existing = urlRepository.findByOriginalUrl(normalizedUrl);
+    LocalDateTime now = LocalDateTime.now();
+
+    if (existing.isPresent()) {
+        ShortUrl existingUrl = existing.get();
+        if (now.isBefore(existingUrl.getCreatedAt().plusMinutes(5))) {
+            //  Still valid
+            return existingUrl;
+        } else {
+            //  Expired — update time
+            existingUrl.setCreatedAt(now);
+            return urlRepository.save(existingUrl);
+        }
+    }
+
+    //  Create new entry
+    ShortUrl url = new ShortUrl();
+    url.setId(UUID.randomUUID().toString().substring(0, 7));
+    url.setOriginalUrl(normalizedUrl);
+    url.setCreatedAt(now);
+    return urlRepository.save(url);
+}
+
+    private String normalizeUrl(String url) {
+    try {
+        URI uri = new URI(url.trim());
+
+        String scheme = uri.getScheme() != null ? uri.getScheme().toLowerCase() : "https";
+        String host = uri.getHost() != null ? uri.getHost().toLowerCase().replaceFirst("^www\\.", "") : "";
+        String path = uri.getPath() != null ? uri.getPath().replaceAll("/$", "") : "";
+        String query = uri.getQuery() != null ? "?" + uri.getQuery() : "";
+
+        return scheme + "://" + host + path + query;
+    } catch (Exception e) {
+        return url.trim(); // fallback
+    }
+}
 
 
     public Optional<ShortUrl> getOriginalUrl(String id) {
